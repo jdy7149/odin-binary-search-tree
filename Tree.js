@@ -20,27 +20,37 @@ export default class Tree {
       }
     };
 
-    helper(this.root);
+    this.root = helper(this.root);
   }
 
   deleteItem(value) {
-    const helper = (node) => {
+    const helper = (node, value) => {
+      if (!node) return null;
+
       if (value === node.value) {
         if (node.left && node.right) {
           let nextBiggest = node.right;
 
+          while (nextBiggest.left) {
+            nextBiggest = nextBiggest.left;
+          }
 
+          node.value = nextBiggest.value;
+
+          node.right = helper(node.right, nextBiggest.value);
         } else {
           return node.left ?? node.right;
         }
       } else if (value < node.value) {
-        node.left = helper(node.left);
+        node.left = helper(node.left, value);
       } else {
-        node.right = helper(node.right);
+        node.right = helper(node.right, value);
       }
+
+      return node;
     };
 
-    helper(this.root);
+    this.root = helper(this.root, value);
   }
 
   find(value) {
